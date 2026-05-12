@@ -1,0 +1,83 @@
+---
+
+import Heading from "./Heading.astro";
+// Henter parametrene fra Astro.props
+const { product } = Astro.props;
+
+// Find det primære billede for første farve
+const firstColor = product.colors[0]?.id;
+
+// Serialiser billeder og farver til Alpine
+const imagesJson = JSON.stringify(product.images);
+
+// Definer styling for produktkort
+const cardClasses = "flex flex-col";
+
+// Definer styling for farve-swatches
+const swatchClasses = "w-5 h-5 rounded-full inline-block";
+---
+
+<div
+  class={cardClasses}
+  x-data={`{
+    activeColor: '${firstColor ?? ""}',
+    images: ${imagesJson},
+    hovered: false,
+    get activeImage() {
+      return this.images.find(i => i.color_id === this.activeColor && i.is_primary)
+        ?? this.images.find(i => i.color_id === this.activeColor)
+        ?? this.images[0];
+    },
+    get secondImage() {
+      return this.images.find(i => i.color_id === this.activeColor && i.storage_path !== this.activeImage?.storage_path)
+        ?? null;
+    },
+  }`}
+>
+  <a href={`/produkt/${product.slug}`} class="flex flex-col">
+
+    <!-- Billede -->
+    <div
+      class="relative w-full aspect-[3/4] overflow-hidden"
+      x-on:mouseenter="hovered = true"
+      x-on:mouseleave="hovered = false"
+    >
+      <img
+        :src="activeImage?.storage_path"
+        :alt="activeImage?.alt_text ?? ''"
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
+        :class="hovered && secondImage ? 'opacity-0' : 'opacity-100'"
+      />
+      <img
+        :src="secondImage?.storage_path ?? activeImage?.storage_path"
+        :alt="secondImage?.alt_text ?? ''"
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
+        :class="hovered && secondImage ? 'opacity-100' : 'opacity-0'"
+      />
+    </div>
+
+    <!-- Produktinfo -->
+    <div class="pt-3 flex flex-col gap-3">
+    
+  <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="bold">{product.name}</Heading>
+
+       <Heading htmlheading="h5" size="tag" font="heading" color="primary" weight="regular">{product.price} {product.currency}</Heading>
+
+      <!-- Farveswatches -->
+      {product.colors.length > 0 && (
+        <div class="flex gap-1.5 flex-wrap mt-1">
+          {product.colors.map((color) => (
+            <span
+              class={swatchClasses}
+              style={`background-color: ${color.hex ?? "#ccc"}`}
+              title={color.name}
+              x-on:mouseenter={`activeColor = '${color.id}'`}
+              :class={`activeColor === '${color.id}' ? 'scale-110' : ''`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+
+  </a>
+</div>

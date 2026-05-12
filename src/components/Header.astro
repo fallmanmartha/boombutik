@@ -1,28 +1,59 @@
 ---
 const pathname = new URL(Astro.request.url).pathname;
-const currentPath = pathname.slice(1); // remove the first "/"
+const currentPath = pathname.slice(1);
 ---
-<header x-data="{ showmenu: false }" class="" >
-    <div id="navbar" class="container mx-auto p-4 flex flex-row justify-between items-center">
-        <div id="logo" class="">
-            <a href="#" class="font-display text-4xl">Astro-Tailwind starter - udvidet udgave E25</a>
-        </div>
-        <nav id="desktopmenu" class="hidden lg:block">
-            <ul class="flex flex-row gap-4">
-                <li class=""><a href="/" class={currentPath === "" ? "italic font-bold" : "italic"}>Forside</a></li><!-- alternativt: lav et <a href="">Link</a>, hvis du ikke vil bruge Link.astro komponenten -->
-                <li class=""><a href="/komponentbibliotek/" class={currentPath === "komponentbibliotek/" ? "italic font-bold" : "italic"}>Komponentbibliotek</a></li>
-            </ul>
-        </nav>
-        <button id="burgermenu" class="lg:hidden" x-on:click="showmenu = ! showmenu"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-</svg>
-</button>
+
+<header x-data="{ showmenu: false }">
+  <!-- DESKTOP -->
+  <div class="hidden lg:flex lg:mx-margin-desktop justify-between items-center py-4">
+    <!-- Logo -->
+    <div>
+      <a href="/"><img src="/boomlogoheader.svg" alt="Logo" class="h-8 w-auto" /></a>
     </div>
-    <nav id="mobilmenu" class="flex flex-col content-center" 
-    x-show="showmenu" x-transition x-on:click="showmenu = false" x-on:click.outside="showmenu = false">
-        <ul class="border-t-2 border-b-2 border-black">
-            <li class="text-center py-2"><a href="/" class={currentPath === "" ? "italic font-bold" : "italic"}>Forside</a></li>
-            <li class="text-center py-2"><a href="/komponentbibliotek/" class={currentPath === "komponentbibliotek/" ? "italic font-bold" : "italic"}>Komponentbibliotek</a></li>
-        </ul>
+
+    <!-- Nav -->
+    <nav>
+      <ul class="flex flex-row gap-8">
+        <li><a href="/listview/" class={currentPath === "listview/" ? "underline" : ""}>Shop</a></li>
+        <li><a href="/" class={currentPath === "/" ? "underline" : ""}>Udforsk Boom</a></li>
+        <li><a href="/" class={currentPath === "/" ? "underline" : ""}>Stylet med BOOM</a></li>
+      </ul>
     </nav>
+
+    <!-- Ikoner -->
+    <div class="flex items-center gap-4">
+      <img src="/search.svg" alt="search icon" class="cursor-pointer" />
+      <img src="/cart.svg" alt="cart icon" class="cursor-pointer" />
+    </div>
+  </div>
+
+  <!-- MOBIL -->
+  <div class="lg:hidden">
+    <!-- Topbar -->
+    <div class="mx-margin-mobile flex justify-between items-center py-4">
+      <!-- Burger -->
+      <button x-on:click="showmenu = !showmenu">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+        </svg>
+      </button>
+
+      <!-- Logo -->
+      <a href="/"><img src="/boomlogoheader.svg" alt="Logo" class="h-6 w-auto" /></a>
+
+      <!-- Ikoner -->
+      <div class="flex items-center gap-4">
+        <img src="/search.svg" alt="search icon" class="cursor-pointer" />
+        <img src="/cart.svg" alt="cart icon" class="cursor-pointer" />
+      </div>
+    </div>
+
+    <!-- Mobilmenu -->
+    <nav x-show="showmenu" x-transition x-on:click="showmenu = false" x-on:click.outside="showmenu = false">
+      <ul class="border-t-2 border-b-2 border-black">
+        <li class="text-center py-2"><a href="/" class={currentPath === "" ? "italic font-bold" : "italic"}>Forside</a></li>
+        <li class="text-center py-2"><a href="/listview/" class={currentPath === "listview/" ? "italic font-bold" : "italic"}>Produkter</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>

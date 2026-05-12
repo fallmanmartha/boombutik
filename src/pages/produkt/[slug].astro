@@ -1,0 +1,201 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { fetchProducts } from "../../lib/supabase";
+import Heading from "../../components/Heading.astro";
+import Button from "../../components/Button.astro";
+import Text from "../../components/Text.astro";
+
+export const prerender = false;
+
+// Hent slug fra URL
+const { slug } = Astro.params;
+
+// Hent alle produkter og find det rigtige
+const products = await fetchProducts();
+const product = products.find((p) => p.slug === slug);
+
+// Forbered data til Alpine
+const firstColor = product.colors[0] ?? null;
+const colorsJson = JSON.stringify(product.colors);
+const imagesJson = JSON.stringify(product.images);
+
+// Definer styling for informations-dropdowns
+const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify-between";
+---
+
+<MainLayout title={product.name}>
+  <main class="lg:mx-margin-desktop mx-margin-mobile">
+
+    <!-- Tilbage-link -->
+    <a href="/listview" class="font-sans text-sm text-gray-400 hover:text-black transition-colors mb-8 inline-block">
+      ← Tilbage til produkter
+    </a>
+
+    <!-- Et samlet Alpine scope -->
+    <div
+      x-data={`{
+        activeColor: '${firstColor?.id ?? ""}',
+        activeSize: null,
+        colors: ${colorsJson},
+        images: ${imagesJson},
+        get filteredImages() {
+          return this.images.filter(i => i.color_id === this.activeColor);
+        },
+        get activeSizes() {
+          const color = this.colors.find(c => c.id === this.activeColor);
+          return color?.sizes ?? [];
+        },
+        get activeColorName() {
+          return this.colors.find(c => c.id === this.activeColor)?.name ?? '';
+        },
+        setColor(colorId) {
+          this.activeColor = colorId;
+          this.activeSize = null;
+        }
+      }`}
+      class="grid grid-cols-1 lg:grid-cols-3 gap-12"
+    >
+
+      <!-- Billeder -->
+      <div class="lg:col-span-2 flex flex-col gap-2">
+
+        <!-- To hovedbilleder -->
+        <div class="grid grid-cols-2 gap-2">
+          <template x-for="img in filteredImages.slice(0, 2)" :key="img.storage_path">
+            <div class="aspect-[3/4] overflow-hidden">
+              <img :src="img.storage_path" :alt="img.alt_text ?? ''" class="w-full h-full object-cover" />
+            </div>
+          </template>
+        </div>
+
+        <!-- Ekstra billeder i grid -->
+<div class="my-10">
+                  <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold"> Stylet af friends of boom</Heading>
+
+        <template x-if="filteredImages.length > 2">
+          <div class="grid grid-cols-4 gap-2 mt-3">
+            <template x-for="img in filteredImages.slice(2)" :key="img.storage_path">
+              <div class="aspect-[3/4] overflow-hidden">
+                <img :src="img.storage_path" :alt="img.alt_text ?? ''" class="w-full h-full object-cover" />
+              </div>
+            </template>
+          </div>
+        </template>
+        </div>
+
+      </div>
+
+      <!-- Produktinfo -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Navn og pris -->
+        <div>
+          <Heading htmlheading="h1" size="xlarge" font="heading" color="primary" weight="black">{product.name}</Heading>
+          <Heading htmlheading="h4" size="small" font="heading" color="primary" weight="bold">{product.price} {product.currency}</Heading>
+        </div>
+
+        <!-- Farver -->
+        {product.colors.length > 0 && (
+          <div>
+            <p class="font-sans text-sm text-gray-500 mb-2">
+              Farve: <span class="text-black font-medium" x-text="activeColorName"></span>
+            </p>
+            <div class="flex gap-2 flex-wrap">
+              {product.colors.map((color) => (
+                <button
+                  x-on:click={`setColor('${color.id}')`}
+                  class="w-8 h-8 rounded-full border-2 transition-all"
+                  :class={`activeColor === '${color.id}' ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400'`}
+                  style={`background-color: ${color.hex ?? "#ccc"}`}
+                  title={color.name}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Størrelser -->
+        {product.colors.some((c) => c.sizes.length > 0) && (
+          <div>
+            <p class="font-sans text-sm text-gray-500 mb-2">Størrelse</p>
+            <div class="flex gap-1.5 flex-wrap">
+              <template x-for="size in activeSizes" :key="size.id">
+                <button
+                  x-on:click="activeSize = size.id"
+                  class="font-sans text-sm border-2 w-11 h-11 transition-all"
+                  :class="activeSize === size.id ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'"
+                  x-text="size.label"
+                ></button>
+              </template>
+            </div>
+          </div>
+        )}
+
+        <!-- Læg i kurv -->
+        <Button variant="primary" size="large">
+          Læg i kurv
+        </Button>
+
+        <!-- Beskrivelse -->
+        {product.description && (
+          <Text teksttype="brødtekst">{product.description}</Text>
+        )}
+
+        <!-- Features -->
+        {product.features.length > 0 && (
+          <ul class="font-sans text-sm text-gray-600 flex flex-col gap-1">
+            {product.features.map((f: string) => (
+              <li>— {f}</li>
+            ))}
+          </ul>
+        )}
+
+        <!-- Informationbox -->
+        <div>
+
+          {product.material && (
+            <details>
+              <summary class={informationboxSummaryClasses}>
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Materiale</Heading>
+                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <Text>{product.material}</Text>
+            </details>
+          )}
+
+          {product.size_guide && (
+            <details>
+              <summary class={informationboxSummaryClasses}>
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Størrelsesguide</Heading>
+                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <Text>{product.size_guide}</Text>
+            </details>
+          )}
+
+          {product.delivery && (
+            <details>
+              <summary class={informationboxSummaryClasses}>
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Levering</Heading>
+                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <Text>{product.delivery}</Text>
+            </details>
+          )}
+
+          {product.returns && (
+            <details>
+              <summary class={informationboxSummaryClasses}>
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Returnering</Heading>
+                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <Text>{product.returns}</Text>
+            </details>
+          )}
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</MainLayout>

@@ -1,50 +1,134 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 @import "tailwindcss-animated";
 @import "tailwindcss-intersect";
 
-@font-face {
-  font-family: 'Honk';
-  src: url('/fonts/Honk-Regular-VariableFont_MORF,SHLN.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Quicksand';
-  src: url('/fonts/Quicksand-VariableFont_wght.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Domine';
-  src: url('/fonts/Domine-Regular.ttf') format('truetype');
-}
-
 @theme {
   /* Her tilføjes theme variable // tokens */
 
   /*Farver */
-  --color-primary-400: #00E4F5;
-  --color-primary-500: #006269;
-  --color-primary-600: #006D75;
-  --color-secondary-400: #F5E400;
-  --color-secondary-500: #F5A600;
-  --color-secondary-600: #F57A00;
+  /* Neutral */
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #000000;
+
+  /* Grey */
+  --color-grey-50: #f6f7f8;
+  --color-grey-100: #eeeff2;
+  --color-grey-200: #e0e2e6;
+  --color-grey-300: #d1d5dc;
+  --color-grey-400: #b5b9c4;
+  --color-grey-500: #a1a5b3;
+  --color-grey-600: #8b8fa1;
+  --color-grey-700: #787a8b;
+  --color-grey-800: #636471;
+  --color-grey-900: #53555d;
+
+  /* Blue */
+  --color-blue-50: #ecfaff;
+  --color-blue-100: #d4f2ff;
+  --color-blue-200: #b2ebff;
+  --color-blue-300: #7edeff;
+  --color-blue-400: #41c9ff;
+  --color-blue-500: #15a9ff;
+  --color-blue-600: #0088ff;
+  --color-blue-700: #016ffe;
+  --color-blue-800: #0059cd;
+  --color-blue-900: #0750a5;
 
   /*Typografi */
-  --font-display: 'Honk', monospace;
-  --font-sans: 'Quicksand', sans-serif;
-  --font-serif: 'Domine', serif;
+  --font-heading: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --text-mobile-h1: 48px;
+  --text-mobile-h2: 38px;
+  --text-mobile-h3: 24px;
+  --text-mobile-h4: 20px;
+  --text-mobile-h5: 18px;
+  --text-mobile-p: 16px;
+  --text-desktop-tag: 14px;
+
+  --text-desktop-h1: 48px;
+  --text-desktop-h2: 40px;
+  --text-desktop-h3: 36px;
+  --text-desktop-h4: 24px;
+  --text-desktop-h5: 18px;
+  --text-desktop-p: 16px;
+  --text-desktop-tag: 14px;
+
+  /* CTA */
+  --text-button-large-desktop: 24px;
+  --text-button-small-desktop: 18px;
+
+  --text-button-large-mobile: 14px;
+  --text-button-small-mobile: 12px;
+
+  /* Text */
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-50);
+
+  /* Button text */
+  --color-text-button-primary: var(--color-neutral-50);
+  --color-text-button-secondary: var(--color-neutral-900);
+
+  /* Body */
+  --color-body-primary: var(--color-neutral-50);
+
+  /* Footer */
+  --color-footer-primary: var(--color-grey-100);
+
+  /* Buttons */
+  --color-button-primary-default: var(--color-blue-900);
+  --color-button-primary-active: var(--color-grey-300);
+  --color-button-primary-hover: var(--color-grey-400);
+
+  --color-button-secondary-default: var(--color-neutral-900);
+  --color-button-secondary-active: var(--color-grey-300);
+  --color-button-secondary-hover: var(--color-grey-400);
+
+  /* Spacing tokens */
+  --spacing-section-mobile: 112px;
+  --spacing-section-desktop: 224px;
+  --spacing-main-top-desktop: 112px;
+  --spacing-main-top-mobile: 64px;
+
+  --spacing-section-padding: 112px;
+
+  --spacing-margin-desktop: 80px;
+  --spacing-margin-mobile: 50px;
+
+  --spacing-h2-mobile: 40px;
+  --spacing-h2-desktop: 48px;
+
+  --spacing-h2-image-mobile: 64px;
+  --spacing-h2-image-desktop: 80px;
+
+  --spacing-h3-mobile: 14px;
+  --spacing-h3-desktop: 20px;
+
+  --spacing-button-large-desktop: 10px 20px;
+  --spacing-button-small-desktop: 10px 16px;
+  --spacing-button-large-mobile: 16px 20px;
+  --spacing-button-small-mobile: 10px 16px;
+
+  --spacing-grid-gap-mobile: 8px;
+  --spacing-grid-gap-desktop: 8px;
+  --spacing-grid-gap-small: 20px;
+
+  --spacing-card: 48px 48px;
+  --spacing-card-image-offset: 40px;
+
+  --spacing-input: 12px 16px;
 }
 
 @layer base {
-
-}
-
-@layer components{
-
-}
-
-@layer utilities{
-  
 }
