@@ -1,6 +1,7 @@
 ---
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname.slice(1);
+import Link from "./Link.astro";
 ---
 
 <header x-data="{ showmenu: false }">
@@ -14,9 +15,9 @@ const currentPath = pathname.slice(1);
     <!-- Nav -->
     <nav>
       <ul class="flex flex-row gap-8">
-        <li><a href="/listview/" class={currentPath === "listview/" ? "underline" : ""}>Shop</a></li>
-        <li><a href="/" class={currentPath === "/" ? "underline" : ""}>Udforsk Boom</a></li>
-        <li><a href="/" class={currentPath === "/" ? "underline" : ""}>Stylet med BOOM</a></li>
+        <li><Link href="/listview/" variant="textlink" size="default" class={currentPath === "listview/" ? "underline" : "underline"}>Shop</Link></li>
+        <li><Link href="/" variant="textlink" size="default">Udforsk Boom</Link></li>
+        <li><Link href="/" variant="textlink" size="default">Stylet med BOOM</Link></li>
       </ul>
     </nav>
 
@@ -50,9 +51,10 @@ const currentPath = pathname.slice(1);
 
     <!-- Mobilmenu -->
     <nav x-show="showmenu" x-transition x-on:click="showmenu = false" x-on:click.outside="showmenu = false">
-      <ul class="border-t-2 border-b-2 border-black">
-        <li class="text-center py-2"><a href="/" class={currentPath === "" ? "italic font-bold" : "italic"}>Forside</a></li>
-        <li class="text-center py-2"><a href="/listview/" class={currentPath === "listview/" ? "italic font-bold" : "italic"}>Produkter</a></li>
+      <ul class="gap-8">
+        <li><Link href="/listview/" variant="textlink" size="default" class={currentPath === "listview/" ? "underline" : "underline"}>Shop</Link></li>
+        <li><Link href="/" variant="textlink" size="default">Udforsk Boom</Link></li>
+        <li><Link href="/" variant="textlink" size="default">Stylet med BOOM</Link></li>
       </ul>
     </nav>
   </div>
