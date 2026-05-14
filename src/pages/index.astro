@@ -6,11 +6,160 @@ import thumbsup from "../assets/images/thumbsup.png";
 import Heading from "../components/Heading.astro";
 import Text from "../components/Text.astro";
 import Button from "../components/Button.astro";
+import Productcard from "../components/Productcard.astro";
+import { fetchProducts } from "../lib/supabase";
+
+// Hent alle produkter fra Supabase
+const products = await fetchProducts();
+
+// Definer grid-styling
+const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop";
 ---
 
-<MainLayout title="Titel">
-  <main class="container mx-auto p-4">
-    <Heading htmlheading="h1">Lav noget flot!</Heading>
-    <Text teksttype="brødtekst">Så bliver Anders glad:-)</Text>
+<MainLayout title="Boom Butik">
+  <main class="pt-10">
+    <section class="relative">
+      <!-- MOBILE IMAGE -->
+      <img src="forside1.jpg" class="w-full h-auto md:hidden object-cover" />
+
+      <!-- DESKTOP IMAGE -->
+      <img src="forside2.png" class="hidden md:block w-full lg:h-150 object-cover" />
+
+      <!-- gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+      <!-- content -->
+      <div class="absolute bottom-0 left-0 p-6 space-y-3">
+        <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> DIN GARDEROBE STARTER HER </Heading>
+
+        <Button variant="primary" size="small"> SHOP NU → </Button>
+      </div>
+    </section>
+    <section class="mt-2 mb-5 lg:mb-8">
+      {products.length === 0 && <p class="font-sans text-gray-500">Ingen produkter fundet.</p>}
+
+      <!-- Mobil: horisontal carousel -->
+      <!-- Desktop: almindeligt grid via gridClasses -->
+      <div class="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+        {
+          products.slice(0, 4).map((product) => (
+            <div class="shrink-0 w-3/4 snap-start">
+              <Productcard product={product} />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Medium og desktop: dit eksisterende grid -->
+      <div class={`hidden md:grid ${gridClasses}`}>
+        {products.slice(0, 4).map((product) => <Productcard product={product} />)}
+      </div>
+    </section>
+    <section class="grid grid-cols-1 mt-2 md:grid-cols-2 gap-2">
+      <!-- CARD 1 -->
+      <div class="relative overflow-hidden">
+        <img src="tøjstativ.png" class="w-full h-160 object-cover" />
+
+        <!-- GRADIENT -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+        <!-- CONTENT -->
+        <div class="absolute bottom-0 left-0 p-6 space-y-3">
+          <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> ET STYKKE SIMPELT TØJ </Heading>
+
+          <Button variant="secondary" size="small"> OM OS → </Button>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="relative overflow-hidden">
+        <img src="astridolsen.webp" class="w-full h-160 object-cover" />
+
+        <!-- GRADIENT -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+        <!-- CONTENT -->
+        <div class="absolute bottom-0 left-0 p-6 space-y-3">
+          <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> TILFØJ DIT PERSONLIGE UDTRYK </Heading>
+
+          <Button variant="secondary" size="small"> STYLET MED BOOM → </Button>
+        </div>
+      </div>
+    </section>
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8 py-8 mt-2 md:py-8 lg:py-10 text-center bg-grey-100">
+      <!-- ITEM 1 -->
+      <div class="flex flex-col items-center gap-1 lg:gap-3">
+        <!-- Fast ikon-container, så alle tekster starter samme sted -->
+        <div class="h-20 md:h-24 lg:h-28 flex items-center justify-center">
+          <img src="Artboard4.svg" class="w-20 h-20 md:w-24 md:h-24 lg:w-30 lg:h-30 object-contain" />
+        </div>
+
+        <Heading htmlheading="h5" size="xsmall" weight="medium" color="primary">
+          FRI FRAGT PÅ ORDRE<br />
+          FRA 499 DKK
+        </Heading>
+      </div>
+
+      <!-- ITEM 2 -->
+      <div class="flex flex-col items-center gap-1 lg:gap-3">
+        <!-- Samme container-højde som de andre -->
+        <div class="h-20 md:h-24 lg:h-28 flex items-center justify-center">
+          <img src="Artboard3.svg" class="w-30 h-30 md:w-36 md:h-36 lg:w-45 lg:h-45 object-contain" />
+        </div>
+
+        <Heading htmlheading="h5" size="xsmall" weight="medium" color="primary">
+          HURTIG LEVERING<br />
+          1-2 DAGE
+        </Heading>
+      </div>
+
+      <!-- ITEM 3 -->
+      <div class="flex flex-col items-center gap-1 lg:gap-3">
+        <div class="h-20 md:h-24 lg:h-28 flex items-center justify-center">
+          <img src="Artboard2.svg" class="w-20 h-20 md:w-24 md:h-24 lg:w-30 lg:h-30 object-contain" />
+        </div>
+
+        <Heading htmlheading="h5" size="xsmall" weight="medium" color="primary">
+          3.642 ANMELDELSER<br />
+          PÅ TRUSTPILOT
+        </Heading>
+      </div>
+    </section>
+    <section class="mt-2 mb-5 lg:mb-8">
+      {products.length === 0 && <p class="font-sans text-gray-500">Ingen produkter fundet.</p>}
+
+      <!-- Mobil: horisontal carousel -->
+      <!-- Desktop: almindeligt grid via gridClasses -->
+      <div class="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+        {
+          products.slice(0, 4).map((product) => (
+            <div class="shrink-0 w-3/4 snap-start">
+              <Productcard product={product} />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Medium og desktop: dit eksisterende grid -->
+      <div class={`hidden md:grid ${gridClasses}`}>
+        {products.slice(0, 4).map((product) => <Productcard product={product} />)}
+      </div>
+    </section>
+    <section class="relative mt-2">
+      <!-- MOBILE IMAGE -->
+      <img src="fysiskbutik.png" class="w-full h-auto md:hidden object-cover" />
+
+      <!-- DESKTOP IMAGE -->
+      <img src="fysiskbutik2.png" class="hidden md:block w-full lg:h-160 object-cover" />
+
+      <!-- gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+      <!-- content -->
+      <div class="absolute bottom-0 left-0 p-6 space-y-3">
+        <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> BESØG VORES FYSISKE BUTIK</Heading>
+        <Text color="secondary">BLÅGÅRDSGADE 14, 2200 KØBENHAVN N<br />ÅBENT ALLE DAGE 12.00 - 18.00</Text>
+      </div>
+    </section>
   </main>
 </MainLayout>
