@@ -2,9 +2,33 @@
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname.slice(1);
 import Link from "./Link.astro";
+import { fetchProducts } from "../lib/supabase";
+import Heading from "./Heading.astro";
+
+// Hent de første 4 produkter til karusel
+const products = await fetchProducts();
+const carouselProducts = products.slice(0, 6);
+
+// Definer kategorier til shop dropdown
+const shopCategories = [
+  { name: "Shop alt", href: "/listview" },
+  { name: "Bestsellers", href: "/kategori/bestsellers" },
+  { name: "Sets", href: "/kategori/sets" },
+  { type: "divider" },
+  { name: "Overdele", href: "/kategori/overdele" },
+  { name: "Nederdele", href: "/kategori/nederdele" },
+  { name: "Accessories", href: "/kategori/accessories" },
+];
+
+// Definer kategorier til udforsk dropdown
+const udforskCategories = [
+  { name: "Om os", href: "/om-os" },
+  { name: "Events", href: "/events" },
+  { name: "Collabs", href: "/collabs" },
+];
 ---
 
-<header x-data="{ showmenu: false }">
+<header x-data="{ showmenu: false }" class="sticky top-0 z-50 bg-white">
   <!-- DESKTOP -->
   <div class="hidden lg:flex lg:mx-margin-desktop justify-between items-center py-4">
     <!-- Logo -->
@@ -15,8 +39,56 @@ import Link from "./Link.astro";
     <!-- Nav -->
     <nav>
       <ul class="flex flex-row gap-8">
-        <li><Link href="/listview/" variant="textlink" size="default" class={currentPath === "listview/" ? "underline" : "underline"}>Shop</Link></li>
-        <li><Link href="/" variant="textlink" size="default">Udforsk Boom</Link></li>
+        <!-- Shop dropdown -->
+        <li x-data="{ open: false }" x-on:mouseenter="open = true" x-on:mouseleave="open = false">
+          <Link href="/listview/" variant="textlink" size="default">
+            Shop
+            <img src="/smallarrow.svg" alt="" class="inline w-3 ml-1" />
+          </Link>
+          <div x-show="open" x-transition class="fixed left-0 right-0 top-16 z-50 bg-white pt-6 pb-8">
+            <div class="lg:mx-margin-desktop">
+              <ul class="flex flex-col gap-3">
+                {
+                  shopCategories.map((cat) =>
+                    cat.type === "divider" ? (
+                      <li class="my-2" />
+                    ) : (
+                      <li>
+                        <a href={cat.href} class="font-sans text-sm hover:underline">
+                          {cat.name}
+                        </a>
+                      </li>
+                    ),
+                  )
+                }
+              </ul>
+            </div>
+          </div>
+        </li>
+
+        <!-- Udforsk Boom dropdown -->
+        <li x-data="{ open: false }" x-on:mouseenter="open = true" x-on:mouseleave="open = false">
+          <Link href="/" variant="textlink" size="default">
+            Udforsk Boom
+            <img src="/smallarrow.svg" alt="" class="inline w-3 ml-1" />
+          </Link>
+          <div x-show="open" x-transition class="fixed left-0 right-0 top-16 z-50 bg-white pt-6 pb-8">
+            <div class="lg:mx-margin-desktop">
+              <ul class="flex flex-col gap-3">
+                {
+                  udforskCategories.map((cat) => (
+                    <li>
+                      <a href={cat.href} class="font-sans text-sm hover:underline">
+                        {cat.name}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+        </li>
+
         <li><Link href="/" variant="textlink" size="default">Stylet med BOOM</Link></li>
       </ul>
     </nav>
@@ -32,17 +104,12 @@ import Link from "./Link.astro";
   <div class="lg:hidden">
     <!-- Topbar -->
     <div class="mx-margin-mobile flex justify-between items-center py-4">
-      <!-- Burger -->
       <button x-on:click="showmenu = !showmenu">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
         </svg>
       </button>
-
-      <!-- Logo -->
       <a href="/"><img src="/boomlogoheader.svg" alt="Logo" class="h-6 w-auto" /></a>
-
-      <!-- Ikoner -->
       <div class="flex items-center gap-4">
         <img src="/search.svg" alt="search icon" class="cursor-pointer" />
         <img src="/cart.svg" alt="cart icon" class="cursor-pointer" />
@@ -50,12 +117,79 @@ import Link from "./Link.astro";
     </div>
 
     <!-- Mobilmenu -->
-    <nav x-show="showmenu" x-transition x-on:click="showmenu = false" x-on:click.outside="showmenu = false">
-      <ul class="gap-8">
-        <li><Link href="/listview/" variant="textlink" size="default" class={currentPath === "listview/" ? "underline" : "underline"}>Shop</Link></li>
-        <li><Link href="/" variant="textlink" size="default">Udforsk Boom</Link></li>
-        <li><Link href="/" variant="textlink" size="default">Stylet med BOOM</Link></li>
+    <nav x-show="showmenu" x-transition x-on:click.outside="showmenu = false" class="fixed left-0 right-0 top-14 bottom-0 bg-white z-50 flex flex-col justify-between overflow-y-auto">
+      <!-- Nav links -->
+      <ul class="flex flex-col gap-4 px-4 py-4">
+        <!-- Shop -->
+        <li x-data="{ open: false }">
+          <button x-on:click="open = !open" class="font-sans text-sm flex items-center gap-2">
+            <Link href="#" variant="textlink" size="default">
+              Shop
+              <img src="/smallarrow.svg" alt="" class="inline w-3 ml-1" />
+            </Link>
+          </button>
+          <ul x-show="open" class="flex flex-col gap-2 mt-2 pl-4">
+            {
+              shopCategories.map((cat) =>
+                cat.type === "divider" ? (
+                  <li class="my-1" />
+                ) : (
+                  <li>
+                    <a href={cat.href} class="font-sans text-sm hover:underline">
+                      {cat.name}
+                    </a>
+                  </li>
+                ),
+              )
+            }
+          </ul>
+        </li>
+
+        <!-- Udforsk Boom -->
+        <li x-data="{ open: false }">
+          <button x-on:click="open = !open" class="font-sans text-sm flex items-center gap-2">
+            <Link href="#" variant="textlink" size="default">
+              Udforsk Boom
+              <img src="/smallarrow.svg" alt="" class="inline w-3 ml-1" />
+            </Link>
+          </button>
+          <ul x-show="open" class="flex flex-col gap-2 mt-2 pl-4">
+            {
+              udforskCategories.map((cat) => (
+                <li>
+                  <a href={cat.href} class="font-sans text-sm hover:underline">
+                    {cat.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </li>
+
+        <li><Link href="/">Stylet med BOOM</Link></li>
       </ul>
+
+      <!-- Karusel längst ned -->
+      <div class="px-4 py-6">
+        <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="semibold">Bestsellers</Heading>
+        <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory mt-3">
+          {
+            carouselProducts.map((product) => (
+              <a href={`/produkt/${product.slug}`} class="flex-shrink-0 w-48 snap-start">
+                <div class="aspect-[3/4] overflow-hidden bg-gray-100 mb-2">
+                  <img src={product.images[0]?.storage_path} alt={product.name} class="w-full h-full object-cover" />
+                </div>
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="semibold">
+                  {product.name}
+                </Heading>
+                <Heading htmlheading="h5" size="tag" font="heading" color="primary" weight="regular">
+                  {product.price} {product.currency}
+                </Heading>
+              </a>
+            ))
+          }
+        </div>
+      </div>
     </nav>
   </div>
 </header>

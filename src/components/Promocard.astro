@@ -1,0 +1,18 @@
+---
+import Heading from "./Heading.astro";
+
+// Henter parametrene fra Astro.props
+const { image, title, href } = Astro.props;
+---
+
+<a href={href} class="flex flex-col group">
+  <div class="w-full aspect-[3/4] overflow-hidden">
+    <img src={image} alt={title} class="w-full h-full object-cover" />
+  </div>
+  <div class="pt-3 flex flex-col gap-1">
+    <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="semibold">{title}</Heading>
+    <div class="w-12 h-full pt-2">
+      <img src="/arrow.svg" alt="Arrow on promocard" class="w-full h-full object-cover" />
+    </div>
+  </div>
+</a>

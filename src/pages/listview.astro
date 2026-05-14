@@ -1,21 +1,35 @@
 ---
+// HÄMTAR KOMPONENTER OCH FUNKTIONER
 import MainLayout from "../layouts/MainLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
+import Promocard from "../components/Promocard.astro";
 import { fetchProducts } from "../lib/supabase";
 
-// Hent alle produkter fra Supabase
+// HÄMTAR ALLA PRODUKTER FRÅN SUPABASE, SÅ DE KAN VISAS I LISTVIEWEN NEDAN
 const products = await fetchProducts();
-
-// Definer grid-styling
-const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop";
 ---
 
-<MainLayout title="Produkter">
-  <main class="container mx-auto p-2">
-    {products.length === 0 && <p class="font-sans text-gray-500">Ingen produkter fundet.</p>}
+<MainLayout title="Boom Butik - Shop alt">
+  <main>
+    <!--START PÅ PRODUKTLISTE -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop">
+      {
+        products.flatMap((product, position) => {
+          const cards = [];
 
-    <div class={gridClasses}>
-      {products.map((product) => <ProductCard product={product} />)}
+          // START PÅ PROMOCARDS MELLEM PRODUKTERNE
+          if (position === 1) cards.push(<Promocard image="/promocard1.webp" title="Sets" href="/kategori/sets" />);
+          if (position === 3) cards.push(<Promocard image="/promocard2.webp" title="Overdele" href="/kategori/overdele" />);
+          if (position === 4) cards.push(<Promocard image="/promocard3.webp" title="Underdele" href="/kategori/underdele" />);
+          //SLUT PÅ PROMOCARDS MELLEM PRODUKTERNE
+
+          // PRODUKTCARDS
+          cards.push(<ProductCard product={product} />);
+          return cards;
+          // SLUT PÅ PRODUKTCARDS
+        })
+      }
     </div>
+    <!-- SLUT PÅ PRODUKTLISTE -->
   </main>
 </MainLayout>
