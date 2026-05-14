@@ -49,19 +49,19 @@
   --font-heading: "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
 
-  --text-mobile-h1: 48px;
-  --text-mobile-h2: 38px;
+  --text-mobile-h1: 32px;
+  --text-mobile-h2: 28px;
   --text-mobile-h3: 24px;
   --text-mobile-h4: 20px;
   --text-mobile-h5: 18px;
-  --text-mobile-p: 16px;
+  --text-mobile-p: 14px;
   --text-desktop-tag: 14px;
 
   --text-desktop-h1: 48px;
   --text-desktop-h2: 40px;
   --text-desktop-h3: 36px;
   --text-desktop-h4: 24px;
-  --text-desktop-h5: 18px;
+  --text-desktop-h5: 20px;
   --text-desktop-p: 16px;
   --text-desktop-tag: 14px;
 
@@ -131,4 +131,12 @@
 }
 
 @layer base {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* Internet Explorer og Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari og Opera */
+  }
 }
