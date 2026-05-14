@@ -4,13 +4,13 @@ import { fetchProducts } from "../../lib/supabase";
 import Heading from "../../components/Heading.astro";
 import Button from "../../components/Button.astro";
 import Text from "../../components/Text.astro";
+import Link from "../../components/Link.astro";
 
-export const prerender = false;
 
-// Hent slug fra URL
+// HENTER SLUG FRA URL 
 const { slug } = Astro.params;
 
-// Hent alle produkter og find det rigtige
+// HENTER ALLA PRODUKTER FRÅN SUPABASE
 const products = await fetchProducts();
 const product = products.find((p) => p.slug === slug);
 
@@ -19,19 +19,21 @@ const firstColor = product.colors[0] ?? null;
 const colorsJson = JSON.stringify(product.colors);
 const imagesJson = JSON.stringify(product.images);
 
-// Definer styling for informations-dropdowns
-const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify-between";
 ---
 
 <MainLayout title={product.name}>
-  <main class="lg:mx-margin-desktop mx-margin-mobile">
+  <main>
+      <!-- START PÅ BREADCRUMB -->
+    <div class="mb-6 flex items-center gap-2">
+      <Text><Link href="/" >Forside</Link></Text>
+      <span>/</span>
+      <Text><Link href="/listview">Alle produkter</Link></Text>
+      <span>/</span>
+      <Text><Link href="">{product.name}</Link></Text>
+    </div>
+        <!-- SLUT PÅ BREADCRUMB -->
 
-    <!-- Tilbage-link -->
-    <a href="/listview" class="font-sans text-sm text-gray-400 hover:text-black transition-colors mb-8 inline-block">
-      ← Tilbage til produkter
-    </a>
-
-    <!-- Et samlet Alpine scope -->
+    <!-- PRODUKTVISNING -->
     <div
       x-data={`{
         activeColor: '${firstColor?.id ?? ""}',
@@ -56,10 +58,10 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
       class="grid grid-cols-1 lg:grid-cols-3 gap-12"
     >
 
-      <!-- Billeder -->
+      <!--HÄR STARTAR SINGLE VIEW SEKTIONEN -->
       <div class="lg:col-span-2 flex flex-col gap-2">
 
-        <!-- To hovedbilleder -->
+        <!-- TVÅ PRODUKTBILLEDER -->
         <div class="grid grid-cols-2 gap-2">
           <template x-for="img in filteredImages.slice(0, 2)" :key="img.storage_path">
             <div class="aspect-[3/4] overflow-hidden">
@@ -68,11 +70,12 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
           </template>
         </div>
 
-        <!-- Ekstra billeder i grid -->
+        <!-- STYLED BY FRIENDS OF BOOM SEKTION -->
 <div class="my-10">
+    <!-- RUBRIK FÖR FRIENDS OF BOOM SEKTIONEN -->
                   <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold"> Stylet af friends of boom</Heading>
 
-        <template x-if="filteredImages.length > 2">
+        <template>
           <div class="grid grid-cols-4 gap-2 mt-3">
             <template x-for="img in filteredImages.slice(2)" :key="img.storage_path">
               <div class="aspect-[3/4] overflow-hidden">
@@ -85,7 +88,7 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
 
       </div>
 
-      <!-- Produktinfo -->
+      <!-- PRODUKTVAL SEKTION-->
       <div class="flex flex-col gap-6">
 
         <!-- Navn og pris -->
@@ -105,7 +108,7 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
                 <button
                   x-on:click={`setColor('${color.id}')`}
                   class="w-8 h-8 rounded-full border-2 transition-all"
-                  :class={`activeColor === '${color.id}' ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400'`}
+                  :class={`activeColor === '${color.id}' ? 'border-black scale-110' : 'border-gray-100 hover:border-gray-300'`}
                   style={`background-color: ${color.hex ?? "#ccc"}`}
                   title={color.name}
                 />
@@ -131,7 +134,7 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
           </div>
         )}
 
-        <!-- Læg i kurv -->
+        <!-- Læg i kurv knap-->
         <Button variant="primary" size="large">
           Læg i kurv
         </Button>
@@ -141,7 +144,7 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
           <Text teksttype="brødtekst">{product.description}</Text>
         )}
 
-        <!-- Features -->
+        <!-- Tags av features -->
         {product.features.length > 0 && (
           <ul class="font-sans text-sm text-gray-600 flex flex-col gap-1">
             {product.features.map((f: string) => (
@@ -150,14 +153,14 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
           </ul>
         )}
 
-        <!-- Informationbox -->
+        <!-- INFORMATION DROPDOWN BOX SEKTION -->
         <div>
 
           {product.material && (
             <details>
-              <summary class={informationboxSummaryClasses}>
+              <summary class="py-2 cursor-pointer list-none flex justify-between">
                 <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Materiale</Heading>
-                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+                <span class="text-text-primary group-open:rotate-45 transition-transform">+</span>
               </summary>
               <Text>{product.material}</Text>
             </details>
@@ -165,9 +168,9 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
 
           {product.size_guide && (
             <details>
-              <summary class={informationboxSummaryClasses}>
+              <summary class="py-2 cursor-pointer list-none flex justify-between">
                 <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Størrelsesguide</Heading>
-                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+                <span class="text-text-primary group-open:rotate-45 transition-transform">+</span>
               </summary>
               <Text>{product.size_guide}</Text>
             </details>
@@ -175,9 +178,9 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
 
           {product.delivery && (
             <details>
-              <summary class={informationboxSummaryClasses}>
+              <summary class="py-2 cursor-pointer list-none flex justify-between">
                 <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Levering</Heading>
-                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+                <span class="text-text-primary group-open:rotate-45 transition-transform">+</span>
               </summary>
               <Text>{product.delivery}</Text>
             </details>
@@ -185,9 +188,9 @@ const informationboxSummaryClasses = "py-2 cursor-pointer list-none flex justify
 
           {product.returns && (
             <details>
-              <summary class={informationboxSummaryClasses}>
+              <summary class="py-2 cursor-pointer list-none flex justify-between">
                 <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Returnering</Heading>
-                <span class="text-neutral-900 group-open:rotate-45 transition-transform">+</span>
+                <span class="text-text-primary group-open:rotate-45 transition-transform">+</span>
               </summary>
               <Text>{product.returns}</Text>
             </details>

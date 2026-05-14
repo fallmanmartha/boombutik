@@ -1,0 +1,43 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import Text from "../../components/Text.astro";
+import Link from "../../components/Link.astro";
+import Heading from "../../components/Heading.astro";
+import { fetchProductsByCategory } from "../../lib/supabase";
+
+export const prerender = false;
+
+// Hent slug fra URL
+const { slug } = Astro.params;
+
+// Hent produkter for denne kategori
+const products = await fetchProductsByCategory(slug);
+
+// DEFINER KATEGORI NAVN TIL TITEL OG BREADCRUMB
+const categoryName = slug.charAt(0) + slug.slice(1);
+---
+
+<MainLayout title={categoryName}>
+  <main>
+    <!-- START PÅ BREADCRUMB -->
+    <div class="mb-6 flex items-center gap-2">
+      <Text><Link href="/" variant="primary">Hjem</Link></Text>
+      <span>/</span>
+      <Text><Link href="/listview" variant="primary">Alle produkter</Link></Text>
+      <span>/</span>
+      <Text><Link href="" variant="primary">{categoryName}</Link></Text>
+    </div>
+    <!-- SLUT PÅ BREADCRUMB -->
+
+    <!-- KATEGORI TITEL -->
+    <Heading htmlheading="h2" size="large">{categoryName}</Heading>
+    <!--SLUT PÅ KATEGORI TITEL -->
+
+    <!--START PÅ PRODUKTLISTE -->
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop mt-6">
+      {products.map((product) => <ProductCard product={product} />)}
+    </div>
+    <!--START PÅ PRODUKTLISTE -->
+  </main>
+</MainLayout>
