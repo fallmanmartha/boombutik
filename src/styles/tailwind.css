@@ -75,6 +75,7 @@
   /* Text */
   --color-text-primary: var(--color-neutral-900);
   --color-text-secondary: var(--color-neutral-50);
+  --color-text-fade: var(--color-neutral-300);
 
   /* Button text */
   --color-text-button-primary: var(--color-neutral-50);
@@ -98,13 +99,13 @@
   /* Spacing tokens */
   --spacing-section-mobile: 112px;
   --spacing-section-desktop: 224px;
-  --spacing-main-top-desktop: 112px;
-  --spacing-main-top-mobile: 64px;
+  --spacing-main-top-desktop: 60px;
+  --spacing-main-top-mobile: 40px;
 
   --spacing-section-padding: 112px;
 
-  --spacing-margin-desktop: 80px;
-  --spacing-margin-mobile: 50px;
+  --spacing-margin-desktop: 40px;
+  --spacing-margin-mobile: 16px;
 
   --spacing-h2-mobile: 40px;
   --spacing-h2-desktop: 48px;

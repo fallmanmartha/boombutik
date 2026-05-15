@@ -1,0 +1,82 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import Heading from "../components/Heading.astro";
+import Text from "../components/Text.astro";
+---
+
+<MainLayout title="Om os">
+  <main class="w-full h-[calc(100vh-64px)] overflow-y-scroll snap-y snap-mandatory">
+    <!-- ========== SEKTION 1: BEGYNDELSEN ========== -->
+    <section class="snap-start h-[calc(100vh-64px)] bg-white grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div class="flex flex-col justify-center px-margin-mobile lg:px-margin-desktop py-16">
+        <div class="">
+          <Heading htmlheading="h2" size="large" weight="bold">BOOM BUTIK</Heading>
+          <Text class="mt-4">
+            Det startede med at jeg kedede mig under den første coronalockdown og havde lyst til at lave lidt frisk business. Samtidig havde jeg så optur over Fruit of the Looms joggingtøj og gik i det hver dag. Pludselig fik jeg ideen til at
+            bestille noget tøj hjem og sælge det på insta.
+          </Text>
+        </div>
+
+        <div class="flex flex-col gap-4 py-16">
+          <a href=""><Heading htmlheading="h3" size="medium" weight="bold" color="fade">BEGYNDELSEN</Heading></a>
+          <a href=""><Heading htmlheading="h3" size="medium" weight="bold" color="fade">FRUIT OF THE BOOM</Heading></a>
+          <a href=""><Heading htmlheading="h3" size="medium" weight="bold" color="fade">HJÆLP FRA VENNER</Heading></a>
+          <a href=""><Heading htmlheading="h3" size="medium" weight="bold" color="fade">HJEMMESIDE</Heading></a>
+          <a href=""><Heading htmlheading="h3" size="medium" weight="bold" color="fade">SAMARBEJDER</Heading></a>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <img src="/omos1.webp" alt="" class="w-full flex-1 object-cover" />
+      </div>
+    </section>
+
+    <!-- ========== SEKTION 2: BEGYNDELSEN 2 ========== -->
+    <section class="snap-start h-[calc(100vh-64px)] bg-white grid grid-cols-1 lg:grid-cols-2">
+      <div class="flex flex-col justify-center px-margin-mobile lg:px-margin-desktop py-16">
+        <Heading htmlheading="h2" size="large" weight="bold">BEGYNDELSEN</Heading>
+        <Text class="mt-4">
+          Det startede med at jeg kedede mig under den første coronalockdown og havde lyst til at lave lidt frisk business. Samtidig havde jeg så optur over Fruit of the Looms joggingtøj og gik i det hver dag. Pludselig fik jeg ideen til at bestille
+          noget tøj hjem og sælge det på insta.
+        </Text>
+      </div>
+      <div class="flex flex-col gap-2">
+        <img src="/omos1.webp" alt="" class="w-full flex-1 object-cover" />
+      </div>
+    </section>
+
+    <!-- ========== SEKTION 3: BOOM BUTIK ========== -->
+    <section class="snap-start h-[calc(100vh-64px)] bg-white grid grid-cols-1 lg:grid-cols-2">
+      <div class="flex flex-col justify-center px-margin-mobile lg:px-margin-desktop py-16">
+        <Heading htmlheading="h2" size="large" weight="bold">BOOM BUTIK</Heading>
+        <Text class="mt-4">
+          Kære kunde, håber du har det godt. Er så glad for at du har forvildet dig ind på vores lille side. Efterhånden er der ret mange, der af en eller anden grund ender herinde, så nu vil jeg endelig tage mig sammen til at skrive en hurtig tekst
+          om, hvad det her er for en mærkelig forretning. Hvis nogen mod forventning skulle være interesseret i at oplyse sig om det.
+        </Text>
+      </div>
+      <div class="flex flex-col gap-2">
+        <img src="/omos1.webp" alt="" class="w-full flex-1 object-cover" />
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const main = document.querySelector("main");
+    const sections = document.querySelectorAll("main section");
+
+    main.addEventListener("scroll", () => {
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const viewHeight = window.innerHeight;
+
+        const scrolledAway = Math.max(0, Math.min(1, -rect.top / viewHeight));
+
+        const scale = 1 - scrolledAway * 0.35;
+        const opacity = 1 - scrolledAway * 1.5;
+
+        section.style.transform = `scale(${scale})`;
+        section.style.transformOrigin = "top center";
+        section.style.opacity = String(Math.max(0, opacity));
+      });
+    });
+  </script>
+</MainLayout>

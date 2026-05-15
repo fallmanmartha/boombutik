@@ -6,32 +6,35 @@ import Button from "../../components/Button.astro";
 import Text from "../../components/Text.astro";
 import Link from "../../components/Link.astro";
 
+export const prerender = false;
 
-// HENTER SLUG FRA URL 
+// HENTER SLUG FRA URL
 const { slug } = Astro.params;
 
 // HENTER ALLA PRODUKTER FRÅN SUPABASE
 const products = await fetchProducts();
 const product = products.find((p) => p.slug === slug);
 
+if (!product) return Astro.redirect("/listview");
+
 // Forbered data til Alpine
 const firstColor = product.colors[0] ?? null;
 const colorsJson = JSON.stringify(product.colors);
 const imagesJson = JSON.stringify(product.images);
-
 ---
 
 <MainLayout title={product.name}>
-  <main>
-      <!-- START PÅ BREADCRUMB -->
+  <main class="lg:mt-main-top-desktop mt-main-top-mobile px-margin-mobile lg:px-margin-desktop">
+
+    <!-- START PÅ BREADCRUMB -->
     <div class="mb-6 flex items-center gap-2">
-      <Text><Link href="/" >Forside</Link></Text>
+      <Text><Link href="/">Forside</Link></Text>
       <span>/</span>
       <Text><Link href="/listview">Alle produkter</Link></Text>
       <span>/</span>
       <Text><Link href="">{product.name}</Link></Text>
     </div>
-        <!-- SLUT PÅ BREADCRUMB -->
+    <!-- SLUT PÅ BREADCRUMB -->
 
     <!-- PRODUKTVISNING -->
     <div
@@ -58,7 +61,7 @@ const imagesJson = JSON.stringify(product.images);
       class="grid grid-cols-1 lg:grid-cols-3 gap-12"
     >
 
-      <!--HÄR STARTAR SINGLE VIEW SEKTIONEN -->
+      <!-- HÄR STARTAR SINGLE VIEW SEKTIONEN -->
       <div class="lg:col-span-2 flex flex-col gap-2">
 
         <!-- TVÅ PRODUKTBILLEDER -->
@@ -71,11 +74,8 @@ const imagesJson = JSON.stringify(product.images);
         </div>
 
         <!-- STYLED BY FRIENDS OF BOOM SEKTION -->
-<div class="my-10">
-    <!-- RUBRIK FÖR FRIENDS OF BOOM SEKTIONEN -->
-                  <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold"> Stylet af friends of boom</Heading>
-
-        <template>
+        <div class="my-10">
+          <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold">Stylet af friends of boom</Heading>
           <div class="grid grid-cols-4 gap-2 mt-3">
             <template x-for="img in filteredImages.slice(2)" :key="img.storage_path">
               <div class="aspect-[3/4] overflow-hidden">
@@ -83,12 +83,11 @@ const imagesJson = JSON.stringify(product.images);
               </div>
             </template>
           </div>
-        </template>
         </div>
 
       </div>
 
-      <!-- PRODUKTVAL SEKTION-->
+      <!-- PRODUKTVAL SEKTION -->
       <div class="flex flex-col gap-6">
 
         <!-- Navn og pris -->
@@ -134,7 +133,7 @@ const imagesJson = JSON.stringify(product.images);
           </div>
         )}
 
-        <!-- Læg i kurv knap-->
+        <!-- Læg i kurv knap -->
         <Button variant="primary" size="large">
           Læg i kurv
         </Button>
