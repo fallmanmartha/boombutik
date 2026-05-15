@@ -1,14 +1,18 @@
 @import "tailwindcss";
 @source "../src";
 
+@variant lg (@media (min-width: 1024px));
+@variant sm (@media (min-width: 640px));
+@variant md (@media (min-width: 768px));
+@variant xl (@media (min-width: 1280px));
+@variant 2xl (@media (min-width: 1536px));
+
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 @import "tailwindcss-animated";
 @import "tailwindcss-intersect";
 
 @theme {
-  /* Her tilføjes theme variable // tokens */
-
   /*Farver */
   /* Neutral */
   --color-neutral-50: #ffffff;
@@ -56,7 +60,6 @@
   --text-mobile-h4: 20px;
   --text-mobile-h5: 18px;
   --text-mobile-p: 14px;
-  --text-desktop-tag: 14px;
 
   --text-desktop-h1: 48px;
   --text-desktop-h2: 40px;
@@ -69,7 +72,6 @@
   /* CTA */
   --text-button-large-desktop: 24px;
   --text-button-small-desktop: 18px;
-
   --text-button-large-mobile: 14px;
   --text-button-small-mobile: 12px;
 
@@ -102,43 +104,34 @@
   --spacing-section-desktop: 224px;
   --spacing-main-top-desktop: 60px;
   --spacing-main-top-mobile: 40px;
-
   --spacing-section-padding: 112px;
-
   --spacing-margin-desktop: 40px;
   --spacing-margin-mobile: 16px;
-
   --spacing-h2-mobile: 40px;
   --spacing-h2-desktop: 48px;
-
   --spacing-h2-image-mobile: 64px;
   --spacing-h2-image-desktop: 80px;
-
   --spacing-h3-mobile: 14px;
   --spacing-h3-desktop: 20px;
-
   --spacing-button-large-desktop: 10px 20px;
   --spacing-button-small-desktop: 10px 16px;
   --spacing-button-large-mobile: 16px 20px;
   --spacing-button-small-mobile: 10px 16px;
-
   --spacing-grid-gap-mobile: 8px;
   --spacing-grid-gap-desktop: 8px;
   --spacing-grid-gap-small: 20px;
-
   --spacing-card: 48px 48px;
   --spacing-card-image-offset: 40px;
-
   --spacing-input: 12px 16px;
 }
 
 @layer base {
   .scrollbar-hide {
-    -ms-overflow-style: none; /* Internet Explorer og Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari og Opera */
+    display: none;
   }
 }
