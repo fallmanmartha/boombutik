@@ -6,7 +6,7 @@ import thumbsup from "../assets/images/thumbsup.png";
 import Heading from "../components/Heading.astro";
 import Text from "../components/Text.astro";
 import Button from "../components/Button.astro";
-import Productcard from "../components/Productcard.astro";
+import ProductCard from "../components/ProductCard.astro";
 import { fetchProducts } from "../lib/supabase";
 import Footer from "../components/Footer.astro";
 
@@ -45,7 +45,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
         {
           products.slice(0, 4).map((product) => (
             <div class="shrink-0 w-3/4 snap-start">
-              <Productcard product={product} />
+              <ProductCard product={product} />
             </div>
           ))
         }
@@ -53,7 +53,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
       <!-- Medium og desktop: dit eksisterende grid -->
       <div class={`hidden md:grid ${gridClasses}`}>
-        {products.slice(0, 4).map((product) => <Productcard product={product} />)}
+        {products.slice(0, 4).map((product) => <ProductCard product={product} />)}
       </div>
     </section>
     <section class="grid grid-cols-1 mt-2 md:grid-cols-2 gap-2">
@@ -135,7 +135,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
         {
           products.slice(0, 4).map((product) => (
             <div class="shrink-0 w-3/4 snap-start">
-              <Productcard product={product} />
+              <ProductCard product={product} />
             </div>
           ))
         }
@@ -143,7 +143,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
       <!-- Medium og desktop: dit eksisterende grid -->
       <div class={`hidden md:grid ${gridClasses}`}>
-        {products.slice(0, 4).map((product) => <Productcard product={product} />)}
+        {products.slice(0, 4).map((product) => <ProductCard product={product} />)}
       </div>
     </section>
     <section class="relative mt-2">

@@ -2,7 +2,7 @@
 // HÄMTAR KOMPONENTER OCH FUNKTIONER
 import MainLayout from "../layouts/MainLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
-import Promocard from "../components/Promocard.astro";
+import PromoCard from "../components/PromoCard.astro";
 import { fetchProducts } from "../lib/supabase";
 
 // HÄMTAR ALLA PRODUKTER FRÅN SUPABASE, SÅ DE KAN VISAS I LISTVIEWEN NEDAN
@@ -18,9 +18,9 @@ const products = await fetchProducts();
           const cards = [];
 
           // START PÅ PROMOCARDS MELLEM PRODUKTERNE
-          if (position === 1) cards.push(<Promocard image="/promocard1.webp" title="Sets" href="/kategori/sets" />);
-          if (position === 3) cards.push(<Promocard image="/promocard2.webp" title="Overdele" href="/kategori/overdele" />);
-          if (position === 4) cards.push(<Promocard image="/promocard3.webp" title="Underdele" href="/kategori/underdele" />);
+          if (position === 1) cards.push(<PromoCard image="/promocard1.webp" title="Sets" href="/kategori/sets" />);
+          if (position === 3) cards.push(<PromoCard image="/promocard2.webp" title="Overdele" href="/kategori/overdele" />);
+          if (position === 4) cards.push(<PromoCard image="/promocard3.webp" title="Underdele" href="/kategori/underdele" />);
           //SLUT PÅ PROMOCARDS MELLEM PRODUKTERNE
 
           // PRODUKTCARDS
