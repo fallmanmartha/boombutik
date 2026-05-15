@@ -9,16 +9,16 @@ import Button from "./Button.astro";
   <!-- Newsletter -->
   <section class="bg-white intersect:animate-flip-up animate-once">
     <div class="w-full flex flex-col md:flex-row items-stretch">
-      <div class="flex-1 py-8 flex items-center">
+      <div class="flex-1 py-8 px-margin-mobile lg:px-margin-desktop flex items-center">
         <Heading htmlheading="h4" size="small" weight="semibold" color="primary"> BOOM BUTIKS NYHEDSBREV </Heading>
       </div>
 
-      <Button variant="secondary" size="small"> TILMELD DIG </Button>
+      <a href="#" class="flex items-center justify-center bg-black text-white px-10 py-4 md:py-5 md:px-16 text-base font-medium tracking-wide hover:opacity-80 transition-opacity w-full md:w-96"> TILMELD NU </a>
     </div>
   </section>
 
   <!-- Footer content -->
-  <section class="bg-grey-100 w-full py-16 md:py-20">
+  <section class="bg-grey-100 w-full py-16 md:py-20 px-margin-mobile lg:px-margin-desktop">
     <!-- Media logos -->
     <div class="mb-16">
       <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> OMTALT I FLOTTE MEDIER </Heading>
@@ -85,11 +85,11 @@ import Button from "./Button.astro";
         <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> FØLG OS </Heading>
 
         <div class="flex items-center gap-5 mt-2 md:mt-4">
-          <a href="#" class="hover:opacity-70 transition-opacity">
+          <a href="https://www.instagram.com/boombutik/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
             <Instagram size={50} strokeWidth={2.2} />
           </a>
 
-          <a href="#" class="hover:opacity-70 transition-opacity">
+          <a href="https://www.facebook.com/profile.php?id=100063946218136" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
             <Facebook size={50} strokeWidth={2.2} />
           </a>
         </div>
