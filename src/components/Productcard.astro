@@ -1,28 +1,29 @@
 ---
-
 import Heading from "./Heading.astro";
+
 // Henter parametrene fra Astro.props
-const { product } = Astro.props;
+const { product, variant = "default" } = Astro.props;
 
 // Find det primære billede for første farve
 const firstColor = product.colors[0]?.id;
 
 // Serialiser billeder og farver til Alpine
 const imagesJson = JSON.stringify(product.images);
-
-// Definer styling for produktkort
-const cardClasses = "flex flex-col";
+const colorsJson = JSON.stringify(product.colors);
 
 // Definer styling for farve-swatches
 const swatchClasses = "w-5 h-5 rounded-full inline-block";
 ---
 
 <div
-  class={cardClasses}
+  class="flex flex-col"
   x-data={`{
     activeColor: '${firstColor ?? ""}',
     images: ${imagesJson},
+    colors: ${colorsJson},
     hovered: false,
+    quickAdd: false,
+    selectedSize: null,
     get activeImage() {
       return this.images.find(i => i.color_id === this.activeColor && i.is_primary)
         ?? this.images.find(i => i.color_id === this.activeColor)
@@ -32,52 +33,93 @@ const swatchClasses = "w-5 h-5 rounded-full inline-block";
       return this.images.find(i => i.color_id === this.activeColor && i.storage_path !== this.activeImage?.storage_path)
         ?? null;
     },
+    get activeSizes() {
+      return this.colors.find(c => c.id === this.activeColor)?.sizes ?? [];
+    },
+    setColor(colorId) {
+      this.activeColor = colorId;
+    }
   }`}
 >
-  <a href={`/produkt/${product.slug}`} class="flex flex-col">
 
-    <!-- Billede -->
-    <div
-      class="relative w-full aspect-[3/4] overflow-hidden"
-      x-on:mouseenter="hovered = true"
-      x-on:mouseleave="hovered = false"
+  <!-- Billede -->
+  <div
+    class="relative w-full aspect-[3/4] overflow-hidden"
+    x-on:mouseenter="hovered = true"
+    x-on:mouseleave="hovered = false; quickAdd = false; selectedSize = null"
+  >
+    <img
+      :src="activeImage?.storage_path"
+      :alt="activeImage?.alt_text ?? ''"
+      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
+      :class="hovered && secondImage ? 'opacity-0' : 'opacity-100'"
+    />
+    <img
+      :src="secondImage?.storage_path ?? activeImage?.storage_path"
+      :alt="secondImage?.alt_text ?? ''"
+      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
+      :class="hovered && secondImage ? 'opacity-100' : 'opacity-0'"
+    />
+
+    <!-- Plus-knap -->
+    <button
+      x-show="!quickAdd"
+      x-on:click.prevent="quickAdd = true"
+      class="absolute bottom-4 right-4 w-7 h-7 bg-button-primary-default text-white flex items-center justify-center align-center"
     >
-      <img
-        :src="activeImage?.storage_path"
-        :alt="activeImage?.alt_text ?? ''"
-        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
-        :class="hovered && secondImage ? 'opacity-0' : 'opacity-100'"
-      />
-      <img
-        :src="secondImage?.storage_path ?? activeImage?.storage_path"
-        :alt="secondImage?.alt_text ?? ''"
-        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200"
-        :class="hovered && secondImage ? 'opacity-100' : 'opacity-0'"
-      />
+      +
+    </button>
+
+    <!-- Quick add panel -->
+    <div
+      x-show="quickAdd"
+      x-on:click.prevent
+      class="absolute right-0 top-0 bottom-0 bg-white flex flex-col items-center justify-center gap-2 px-1 py-2 w-14"
+    >
+      <template x-for="size in activeSizes" :key="size.id">
+        <button
+          x-on:click.prevent="selectedSize = size.id"
+          class="font-sans text-sm w-11 h-11 transition-all"
+          :class="selectedSize === size.id ? 'bg-black text-white' : 'hover:font-bold'"
+          x-text="size.label"
+        ></button>
+      </template>
+      <button x-on:click.prevent="quickAdd = false; selectedSize = null" class="mt-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+        </svg>
+      </button>
     </div>
 
-    <!-- Produktinfo -->
-    <div class="pt-3 flex flex-col gap-3">
-    
-  <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="semibold">{product.name}</Heading>
+    <!-- Variant: minimal — klickbar länk över hela bilden -->
+    {variant === "minimal" && (
+      <a href={`/produkt/${product.slug}`} class="absolute inset-0"></a>
+    )}
 
-       <Heading htmlheading="h5" size="tag" font="heading" color="primary" weight="regular">{product.price} {product.currency}</Heading>
+  </div>
 
-      <!-- Farveswatches -->
-      {product.colors.length > 0 && (
-        <div class="flex gap-1.5 flex-wrap mt-1">
-          {product.colors.map((color) => (
-            <span
-              class={swatchClasses}
-              style={`background-color: ${color.hex ?? "#ccc"}`}
-              title={color.name}
-              x-on:mouseenter={`activeColor = '${color.id}'`}
-              :class={`activeColor === '${color.id}' ? 'scale-110' : ''`}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+  <!-- Variant: default — produktinfo under bilden -->
+  {variant === "default" && (
+    <a href={`/produkt/${product.slug}`}>
+      <div class="pt-3 flex flex-col gap-3">
+        <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="semibold">{product.name}</Heading>
+        <Heading htmlheading="h5" size="tag" font="heading" color="primary" weight="regular">{product.price} {product.currency}</Heading>
 
-  </a>
+        {product.colors.length > 0 && (
+          <div class="flex gap-1.5 flex-wrap mt-1">
+            {product.colors.map((color) => (
+              <span
+                class={swatchClasses}
+                style={`background-color: ${color.hex ?? "#ccc"}`}
+                title={color.name}
+                x-on:mouseenter={`setColor('${color.id}')`}
+                :class={`activeColor === '${color.id}' ? 'scale-110' : ''`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </a>
+  )}
+
 </div>
