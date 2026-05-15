@@ -1,7 +1,99 @@
 ---
+import { Instagram, Facebook } from "lucide-astro";
+import Heading from "./Heading.astro";
+import Text from "./Text.astro";
+import Button from "./Button.astro";
 ---
-<footer class="bg-primary-500 text-white">
-    <div class="container mx-auto p-4">
-        <p>&copy; 2025</p>
+
+<footer class="mt-20">
+  <!-- Newsletter -->
+  <section class="bg-white intersect:animate-flip-up animate-once">
+    <div class="w-full flex flex-col md:flex-row items-stretch">
+      <div class="flex-1 py-8 flex items-center">
+        <Heading htmlheading="h4" size="small" weight="semibold" color="primary"> BOOM BUTIKS NYHEDSBREV </Heading>
+      </div>
+
+      <Button variant="secondary" size="small"> TILMELD DIG </Button>
     </div>
+  </section>
+
+  <!-- Footer content -->
+  <section class="bg-grey-100 w-full py-16 md:py-20">
+    <!-- Media logos -->
+    <div class="mb-16">
+      <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> OMTALT I FLOTTE MEDIER </Heading>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
+        <!-- 1 -->
+        <img src="footer1.svg" alt="Politiken" class="h-7 md:h-9 w-auto object-contain justify-self-start" />
+
+        <!-- 2 -->
+        <img src="footer2.svg" alt="Forbes" class="h-7 md:h-9 w-auto object-contain justify-self-start md:justify-self-center" />
+
+        <!-- 3 -->
+        <img src="footer3.svg" alt="Euroman" class="h-7 md:h-9 w-auto object-contain justify-self-start md:justify-self-center" />
+
+        <!-- 4 -->
+        <img src="footer4.svg" alt="Berlingske" class="h-7 md:h-9 w-auto object-contain justify-self-start md:justify-self-end" />
+      </div>
+    </div>
+
+    <!-- Footer columns -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-16">
+      <div class="flex flex-col items-center sm:items-start text-center sm:text-left order-last lg:order-none">
+        <img src="Vector.svg" alt="logo" class="mb-6 h-20" />
+
+        <Text class="text-center sm:text-left"> © 2025 BOOM BUTIK ApS, CVR: 44150875 </Text>
+      </div>
+
+      <div>
+        <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> KONTAKT </Heading>
+        <div class="mt-2 md:mt-4">
+          <Text>E-mail:</Text>
+          <a href="mailto:kontakt@boombutik.dk" class="hover:underline"> kontakt@boombutik.dk </a>
+        </div>
+      </div>
+
+      <div>
+        <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> KØBSBETINGELSER </Heading>
+
+        <ul class="space-y-2 mt-2 md:mt-4">
+          <li><a href="#" class="hover:underline">Levering</a></li>
+          <li><a href="#" class="hover:underline">Returnering</a></li>
+          <li><a href="#" class="hover:underline">Privatliv</a></li>
+          <li><a href="#" class="hover:underline">Handelsbetingelser</a></li>
+          <li><a href="#" class="hover:underline">Studierabat</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> FYSISK BUTIK </Heading>
+
+        <div class="space-y-4 mt-2 md:mt-4">
+          <Text>
+            Blågårdsgade 14,<br />
+            2200 København
+          </Text>
+
+          <Text>
+            Åbent alle ugens dage:<br />
+            12.00 - 18.00
+          </Text>
+        </div>
+      </div>
+
+      <div>
+        <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> FØLG OS </Heading>
+
+        <div class="flex items-center gap-5 mt-2 md:mt-4">
+          <a href="#" class="hover:opacity-70 transition-opacity">
+            <Instagram size={50} strokeWidth={2.2} />
+          </a>
+
+          <a href="#" class="hover:opacity-70 transition-opacity">
+            <Facebook size={50} strokeWidth={2.2} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 </footer>
