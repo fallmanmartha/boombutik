@@ -1,17 +1,10 @@
 ---
 import Heading from "./Heading.astro";
 
-// Henter parametrene fra Astro.props
 const { product, variant = "default" } = Astro.props;
-
-// Find det primære billede for første farve
 const firstColor = product.colors[0]?.id;
-
-// Serialiser billeder og farver til Alpine
 const imagesJson = JSON.stringify(product.images);
 const colorsJson = JSON.stringify(product.colors);
-
-// Definer styling for farve-swatches
 const swatchClasses = "w-5 h-5 rounded-full inline-block";
 ---
 
@@ -25,13 +18,12 @@ const swatchClasses = "w-5 h-5 rounded-full inline-block";
     quickAdd: false,
     selectedSize: null,
     get activeImage() {
-      return this.images.find(i => i.color_id === this.activeColor && i.is_primary)
-        ?? this.images.find(i => i.color_id === this.activeColor)
+      return this.images.find(i => i.color_id === this.activeColor)
         ?? this.images[0];
     },
     get secondImage() {
-      return this.images.find(i => i.color_id === this.activeColor && i.storage_path !== this.activeImage?.storage_path)
-        ?? null;
+      const filtered = this.images.filter(i => i.color_id === this.activeColor);
+      return filtered[1] ?? null;
     },
     get activeSizes() {
       return this.colors.find(c => c.id === this.activeColor)?.sizes ?? [];
@@ -61,11 +53,14 @@ const swatchClasses = "w-5 h-5 rounded-full inline-block";
       :class="hovered && secondImage ? 'opacity-100' : 'opacity-0'"
     />
 
+    <!-- Klickbar länk över hela bilden -->
+    <a href={`/produkt/${product.slug}`} class="absolute inset-0"></a>
+
     <!-- Plus-knap -->
     <button
       x-show="!quickAdd"
       x-on:click.prevent="quickAdd = true"
-      class="absolute bottom-4 right-4 w-7 h-7 bg-button-primary-default text-white flex items-center justify-center align-center"
+      class="absolute bottom-4 right-4 w-7 h-7 bg-button-primary-default text-white flex items-center justify-center z-10"
     >
       +
     </button>
@@ -74,7 +69,7 @@ const swatchClasses = "w-5 h-5 rounded-full inline-block";
     <div
       x-show="quickAdd"
       x-on:click.prevent
-      class="absolute right-0 top-0 bottom-0 bg-white flex flex-col items-center justify-center gap-2 px-1 py-2 w-14"
+      class="absolute right-0 top-0 bottom-0 bg-white flex flex-col items-center justify-center gap-2 px-1 py-2 w-14 z-10"
     >
       <template x-for="size in activeSizes" :key="size.id">
         <button
@@ -91,20 +86,14 @@ const swatchClasses = "w-5 h-5 rounded-full inline-block";
       </button>
     </div>
 
-    <!-- Variant: minimal — klickbar länk över hela bilden -->
-    {variant === "minimal" && (
-      <a href={`/produkt/${product.slug}`} class="absolute inset-0"></a>
-    )}
-
   </div>
 
   <!-- Variant: default — produktinfo under bilden -->
   {variant === "default" && (
     <a href={`/produkt/${product.slug}`}>
       <div class="pt-3 flex flex-col gap-3">
-        <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="semibold">{product.name}</Heading>
+        <Heading htmlheading="h5" size="xsmall" font="heading" color="primary" weight="medium">{product.name}</Heading>
         <Heading htmlheading="h5" size="tag" font="heading" color="primary" weight="regular">{product.price} {product.currency}</Heading>
-
         {product.colors.length > 0 && (
           <div class="flex gap-1.5 flex-wrap mt-1">
             {product.colors.map((color) => (

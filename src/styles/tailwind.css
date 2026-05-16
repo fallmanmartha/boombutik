@@ -60,6 +60,7 @@
   --text-mobile-h4: 20px;
   --text-mobile-h5: 18px;
   --text-mobile-p: 14px;
+  --text-mobile-tag: 12px;
 
   --text-desktop-h1: 48px;
   --text-desktop-h2: 40px;
@@ -70,7 +71,7 @@
   --text-desktop-tag: 14px;
 
   /* CTA */
-  --text-button-large-desktop: 24px;
+  --text-button-large-desktop: 20px;
   --text-button-small-desktop: 18px;
   --text-button-large-mobile: 14px;
   --text-button-small-mobile: 12px;
