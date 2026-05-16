@@ -8,13 +8,29 @@ import Button from "./Button.astro";
 <footer class="mt-20">
   <!-- Newsletter -->
   <section class="bg-white intersect:animate-flip-up animate-once">
-    <div class="w-full flex flex-col md:flex-row items-stretch">
-      <div class="flex-1 py-8 px-margin-mobile lg:px-margin-desktop flex items-center">
-        <Heading htmlheading="h4" size="small" weight="semibold" color="primary"> BOOM BUTIKS NYHEDSBREV </Heading>
+    <form id="newsletterForm" class="w-full flex flex-col md:flex-row items-stretch">
+      <!-- INPUT -->
+      <div class="flex-1 flex items-stretch px-margin-mobile lg:px-margin-desktop py-6 md:py-0">
+        <div class="w-full relative flex items-center">
+          <input id="emailInput" type="email" required placeholder="" class="w-full bg-transparent border-0 outline-none text-sm md:text-base text-black py-4 pl-0 peer focus:outline-none focus:ring-0" />
+          <!-- LABEL -->
+          <label
+            class="absolute left-0 top-1/2 -translate-y-1/2 text-grey-400 pointer-events-none transition-all duration-200 text-xl md:text-2xl font-semibold tracking-wide peer-focus:-top-2 peer-focus:text-grey-300 peer-valid:-top-2 peer-valid:text-grey-300"
+          >
+            BOOM BUTIKS NYHEDSBREV
+          </label>
+        </div>
       </div>
-
-      <a href="#" class="flex items-center justify-center bg-black text-white px-10 py-4 md:py-5 md:px-16 text-base font-medium tracking-wide hover:opacity-80 transition-opacity w-full md:w-96"> TILMELD NU </a>
-    </div>
+      <!-- BUTTON -->
+      <button
+        type="submit"
+        class="flex items-center justify-center bg-button-secondary-default hover:bg-button-secondary-hover active:bg-button-secondary-active text-text-button-primary hover:text-text-button-secondary px-6 py-3 md:px-16 md:py-5 text-sm md:text-base font-medium tracking-wide hover:opacity-80 transition-opacity w-full md:w-96 cursor-pointer"
+      >
+        TILMELD NU
+      </button>
+    </form>
+    <!-- POPUP -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-3 text-sm rounded-full opacity-0 translate-y-4 pointer-events-none transition-all duration-300">Tak for din tilmelding ✨</div>
   </section>
 
   <!-- Footer content -->
@@ -85,11 +101,11 @@ import Button from "./Button.astro";
         <Heading htmlheading="h5" size="xsmall" weight="semibold" color="primary"> FØLG OS </Heading>
 
         <div class="flex items-center gap-5 mt-2 md:mt-4">
-          <a href="https://www.instagram.com/boombutik/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
+          <a href="https://www.instagram.com/boombutik/" target="_blank" rel="noopener noreferrer" class="transition-transform duration-200 hover:scale-110">
             <Instagram size={50} strokeWidth={2.2} />
           </a>
 
-          <a href="https://www.facebook.com/profile.php?id=100063946218136" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
+          <a href="https://www.facebook.com/profile.php?id=100063946218136" target="_blank" rel="noopener noreferrer" class="transition-transform duration-200 hover:scale-110">
             <Facebook size={50} strokeWidth={2.2} />
           </a>
         </div>
@@ -97,3 +113,36 @@ import Button from "./Button.astro";
     </div>
   </section>
 </footer>
+
+<script>
+  const form = document.getElementById("newsletterForm");
+  const input = document.getElementById("emailInput");
+  const toast = document.getElementById("toast");
+
+  input.addEventListener("focus", () => {
+    input.setAttribute("placeholder", "kontakt@boombutik.dk");
+  });
+
+  input.addEventListener("blur", () => {
+    if (!input.value) {
+      input.removeAttribute("placeholder");
+    }
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!input.value) return;
+
+    toast.classList.remove("opacity-0", "translate-y-4");
+    toast.classList.add("opacity-100", "translate-y-0");
+
+    input.value = "";
+    input.removeAttribute("placeholder");
+
+    setTimeout(() => {
+      toast.classList.add("opacity-0", "translate-y-4");
+      toast.classList.remove("opacity-100", "translate-y-0");
+    }, 3000);
+  });
+</script>

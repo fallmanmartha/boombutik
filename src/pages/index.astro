@@ -8,7 +8,6 @@ import Text from "../components/Text.astro";
 import Button from "../components/Button.astro";
 import ProductCard from "../components/ProductCard.astro";
 import { fetchProducts } from "../lib/supabase";
-import Footer from "../components/Footer.astro";
 
 // Hent alle produkter fra Supabase
 const products = await fetchProducts();
@@ -31,7 +30,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
       <!-- content -->
       <div class="absolute bottom-0 left-0 p-6 space-y-3">
-        <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> DIN GARDEROBE STARTER HER </Heading>
+        <Heading htmlheading="h2" size="large" weight="semibold" color="secondary"> DIN GARDEROBE STARTER HER </Heading>
 
         <Button variant="primary" size="small"> SHOP NU → </Button>
       </div>
@@ -66,7 +65,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
         <!-- CONTENT -->
         <div class="absolute bottom-0 left-0 p-6 space-y-3">
-          <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> ET STYKKE SIMPELT TØJ </Heading>
+          <Heading htmlheading="h3" size="medium" weight="semibold" color="secondary"> ET STYKKE SIMPELT TØJ </Heading>
 
           <Button variant="secondary" size="small"> OM OS → </Button>
         </div>
@@ -81,7 +80,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
         <!-- CONTENT -->
         <div class="absolute bottom-0 left-0 p-6 space-y-3">
-          <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> TILFØJ DIT PERSONLIGE UDTRYK </Heading>
+          <Heading htmlheading="h3" size="medium" weight="semibold" color="secondary"> TILFØJ DIT PERSONLIGE UDTRYK </Heading>
 
           <Button variant="secondary" size="small"> STYLET MED BOOM → </Button>
         </div>
@@ -121,7 +120,7 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
         </div>
 
         <Heading htmlheading="h5" size="xsmall" weight="medium" color="primary">
-          3.642 ANMELDELSER<br />
+          4,6/5 STJERNER<br />
           PÅ TRUSTPILOT
         </Heading>
       </div>
@@ -158,8 +157,8 @@ const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap
 
       <!-- content -->
       <div class="absolute bottom-0 left-0 p-6 space-y-3">
-        <Heading htmlheading="h3" size="medium" weight="medium" color="secondary"> BESØG VORES FYSISKE BUTIK</Heading>
-        <Text color="secondary">BLÅGÅRDSGADE 14, 2200 KØBENHAVN N<br />ÅBENT ALLE DAGE 12.00 - 18.00</Text>
+        <Heading htmlheading="h3" size="medium" weight="semibold" color="secondary"> BESØG VORES FYSISKE BUTIK</Heading>
+        <Text color="secondary">Blågårdsgade 14, 2200 København N<br />Åbent alle dage 12.00 - 18.00</Text>
       </div>
     </section>
   </main>
