@@ -1,35 +1,29 @@
 ---
-// HÄMTAR KOMPONENTER OCH FUNKTIONER
 import MainLayout from "../layouts/MainLayout.astro";
 import ProductCard from "../components/ProductCard.astro";
 import PromoCard from "../components/PromoCard.astro";
 import { fetchProducts } from "../lib/supabase";
 
-// HÄMTAR ALLA PRODUKTER FRÅN SUPABASE, SÅ DE KAN VISAS I LISTVIEWEN NEDAN
 const products = await fetchProducts();
 ---
 
 <MainLayout title="Boom Butik - Shop alt">
   <main>
-    <!--START PÅ PRODUKTLISTE -->
     <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop lg:mt-main-top-desktop mt-main-top-mobile px-margin-mobile lg:px-margin-desktop">
       {
         products.flatMap((product, position) => {
           const cards = [];
 
-          // START PÅ PROMOCARDS MELLEM PRODUKTERNE
           if (position === 1) cards.push(<PromoCard image="/promocard1.webp" title="Sets" href="/kategori/sets" />);
-          if (position === 3) cards.push(<PromoCard image="/promocard2.webp" title="Overdele" href="/kategori/overdele" />);
-          if (position === 4) cards.push(<PromoCard image="/promocard3.webp" title="Underdele" href="/kategori/underdele" />);
-          //SLUT PÅ PROMOCARDS MELLEM PRODUKTERNE
+          if (position === 6) cards.push(<PromoCard image="/promocard2.webp" title="Overdele" href="/kategori/overdele" />);
+          if (position === 10) cards.push(<PromoCard image="/promocard3.webp" title="Underdele" href="/kategori/underdele" />);
+          if (position === 15) cards.push(<PromoCard image="/promocard4.webp" title="Accessories" href="/kategori/accessories" />);
+          if (position === 20) cards.push(<PromoCard image="/promocard5.webp" title="Sportstøj" href="/kategori/sportstoj" />);
 
-          // PRODUKTCARDS
           cards.push(<ProductCard product={product} />);
           return cards;
-          // SLUT PÅ PRODUKTCARDS
         })
       }
     </div>
-    <!-- SLUT PÅ PRODUKTLISTE -->
   </main>
 </MainLayout>

@@ -5,19 +5,17 @@ import Heading from "../../components/Heading.astro";
 import Button from "../../components/Button.astro";
 import Text from "../../components/Text.astro";
 import Link from "../../components/Link.astro";
+import ProductCard from "../../components/ProductCard.astro";
 
 export const prerender = false;
+const gridClasses = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-grid-gap-desktop";
 
-// HENTER SLUG FRA URL
 const { slug } = Astro.params;
-
-// HENTER ALLA PRODUKTER FRÅN SUPABASE
 const products = await fetchProducts();
 const product = products.find((p) => p.slug === slug);
 
 if (!product) return Astro.redirect("/listview");
 
-// Forbered data til Alpine
 const firstColor = product.colors[0] ?? null;
 const colorsJson = JSON.stringify(product.colors);
 const imagesJson = JSON.stringify(product.images);
@@ -26,7 +24,7 @@ const imagesJson = JSON.stringify(product.images);
 <MainLayout title={product.name}>
   <main class="lg:mt-main-top-desktop mt-main-top-mobile px-margin-mobile lg:px-margin-desktop">
 
-    <!-- START PÅ BREADCRUMB -->
+    <!-- BREADCRUMB -->
     <div class="mb-6 flex items-center gap-2">
       <Text><Link href="/">Forside</Link></Text>
       <span>/</span>
@@ -34,17 +32,35 @@ const imagesJson = JSON.stringify(product.images);
       <span>/</span>
       <Text><Link href="">{product.name}</Link></Text>
     </div>
-    <!-- SLUT PÅ BREADCRUMB -->
 
     <!-- PRODUKTVISNING -->
     <div
       x-data={`{
         activeColor: '${firstColor?.id ?? ""}',
         activeSize: null,
+        currentIndex: 0,
         colors: ${colorsJson},
         images: ${imagesJson},
         get filteredImages() {
           return this.images.filter(i => i.color_id === this.activeColor);
+        },
+        get visibleImages() {
+          return this.filteredImages.slice(this.currentIndex * 2, this.currentIndex * 2 + 2);
+        },
+        get totalPages() {
+          return Math.ceil(this.filteredImages.length / 2);
+        },
+        get canPrev() {
+          return this.currentIndex > 0;
+        },
+        get canNext() {
+          return this.currentIndex < this.totalPages - 1;
+        },
+        prev() {
+          if (this.canPrev) this.currentIndex--;
+        },
+        next() {
+          if (this.canNext) this.currentIndex++;
         },
         get activeSizes() {
           const color = this.colors.find(c => c.id === this.activeColor);
@@ -56,45 +72,90 @@ const imagesJson = JSON.stringify(product.images);
         setColor(colorId) {
           this.activeColor = colorId;
           this.activeSize = null;
+          this.currentIndex = 0;
         }
       }`}
       class="grid grid-cols-1 lg:grid-cols-3 gap-12"
     >
 
-      <!-- HÄR STARTAR SINGLE VIEW SEKTIONEN -->
+      <!-- VENSTRE: Billeder -->
       <div class="lg:col-span-2 flex flex-col gap-2">
 
-        <!-- TVÅ PRODUKTBILLEDER -->
-        <div class="grid grid-cols-2 gap-2">
-          <template x-for="img in filteredImages.slice(0, 2)" :key="img.storage_path">
-            <div class="aspect-[3/4] overflow-hidden">
-              <img :src="img.storage_path" :alt="img.alt_text ?? ''" class="w-full h-full object-cover" />
-            </div>
-          </template>
-        </div>
-
-        <!-- STYLED BY FRIENDS OF BOOM SEKTION -->
-        <div class="my-10">
-          <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold">Stylet af friends of boom</Heading>
-          <div class="grid grid-cols-4 gap-2 mt-3">
-            <template x-for="img in filteredImages.slice(2)" :key="img.storage_path">
+        <!-- PRODUKTBILLEDER MED NAVIGATION -->
+        <div class="relative">
+          <div class="grid grid-cols-2 gap-2">
+            <template x-for="img in visibleImages" :key="img.storage_path">
               <div class="aspect-[3/4] overflow-hidden">
                 <img :src="img.storage_path" :alt="img.alt_text ?? ''" class="w-full h-full object-cover" />
               </div>
             </template>
           </div>
+
+          <!-- Forrige knap -->
+          <button
+            x-show="canPrev"
+            x-on:click="prev()"
+            class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white flex items-center justify-center shadow z-10"
+          >
+            ←
+          </button>
+
+          <!-- Næste knap -->
+          <button
+            x-show="canNext"
+            x-on:click="next()"
+            class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white flex items-center justify-center shadow z-10"
+          >
+            →
+          </button>
+
+          <!-- Side indikatorer -->
+          <div x-show="totalPages > 1" class="flex justify-center gap-2 mt-3">
+            <template x-for="i in totalPages" :key="i">
+              <button
+                x-on:click="currentIndex = i - 1"
+                class="w-2 h-2 rounded-full transition-all"
+                :class="currentIndex === i - 1 ? 'bg-black' : 'bg-gray-300'"
+              ></button>
+            </template>
+          </div>
         </div>
+
+        <!-- STYLED BY FRIENDS OF BOOM -->
+        {product.friends_images.length > 0 && (
+          <div class="my-10">
+            <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="bold">Stylet af friends of boom</Heading>
+            <div class="grid grid-cols-4 gap-2 mt-3">
+              {product.friends_images.map((img: { storage_path: string; alt_text?: string }) => (
+                <div class="aspect-[3/4] overflow-hidden">
+                  <img src={img.storage_path} alt={img.alt_text ?? ""} class="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
 
-      <!-- PRODUKTVAL SEKTION -->
+      <!-- HØJRE: Produktinfo -->
       <div class="flex flex-col gap-6">
 
         <!-- Navn og pris -->
         <div>
-          <Heading htmlheading="h1" size="xlarge" font="heading" color="primary" weight="black">{product.name}</Heading>
-          <Heading htmlheading="h4" size="small" font="heading" color="primary" weight="bold">{product.price} {product.currency}</Heading>
+          <div class="mb-2">
+            <Heading htmlheading="h1" size="xlarge" font="heading" color="primary" weight="black">{product.name}</Heading>
+          </div>
+          <Heading htmlheading="h4" size="small" font="heading" color="primary" weight="medium">{product.price} {product.currency}</Heading>
         </div>
+
+        <!-- Features -->
+        {product.features.length > 0 && (
+          <ul class="flex flex-col gap-1">
+            {product.features.map((f: string) => (
+              <li><Text variant="tag">- {f}</Text></li>
+            ))}
+          </ul>
+        )}
 
         <!-- Farver -->
         {product.colors.length > 0 && (
@@ -106,8 +167,8 @@ const imagesJson = JSON.stringify(product.images);
               {product.colors.map((color) => (
                 <button
                   x-on:click={`setColor('${color.id}')`}
-                  class="w-8 h-8 rounded-full border-2 transition-all"
-                  :class={`activeColor === '${color.id}' ? 'border-black scale-110' : 'border-gray-100 hover:border-gray-300'`}
+                  class="w-8 h-8 border-1 transition-all"
+                  :class={`activeColor === '${color.id}' ? 'border-black scale-101' : 'border-gray-100 hover:border-gray-300'`}
                   style={`background-color: ${color.hex ?? "#ccc"}`}
                   title={color.name}
                 />
@@ -125,7 +186,7 @@ const imagesJson = JSON.stringify(product.images);
                 <button
                   x-on:click="activeSize = size.id"
                   class="font-sans text-sm border-2 w-11 h-11 transition-all"
-                  :class="activeSize === size.id ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'"
+                  :class="activeSize === size.id ? 'border-none bg-black text-white' : 'border-none hover:border-black'"
                   x-text="size.label"
                 ></button>
               </template>
@@ -133,27 +194,23 @@ const imagesJson = JSON.stringify(product.images);
           </div>
         )}
 
-        <!-- Læg i kurv knap -->
+        <!-- Læg i kurv -->
         <Button variant="primary" size="large">
           Læg i kurv
         </Button>
 
-        <!-- Beskrivelse -->
-        {product.description && (
-          <Text teksttype="brødtekst">{product.description}</Text>
-        )}
-
-        <!-- Tags av features -->
-        {product.features.length > 0 && (
-          <ul class="font-sans text-sm text-gray-600 flex flex-col gap-1">
-            {product.features.map((f: string) => (
-              <li>— {f}</li>
-            ))}
-          </ul>
-        )}
-
-        <!-- INFORMATION DROPDOWN BOX SEKTION -->
+        <!-- Dropdowns -->
         <div>
+
+          {product.description && (
+            <details>
+              <summary class="py-2 cursor-pointer list-none flex justify-between">
+                <Heading htmlheading="h4" size="tag" font="heading" color="primary" weight="bold">Beskrivelse</Heading>
+                <span class="text-text-primary group-open:rotate-45 transition-transform">+</span>
+              </summary>
+              <Text teksttype="brødtekst">{product.description}</Text>
+            </details>
+          )}
 
           {product.material && (
             <details>
@@ -196,8 +253,26 @@ const imagesJson = JSON.stringify(product.images);
           )}
 
         </div>
+
       </div>
     </div>
+
+    <!-- ANDRE KØBTE OGSÅ -->
+    <section class="mt-2 mb-5 lg:mb-8">
+      <div class="mb-3">
+        <Heading htmlheading="h2" size="large" font="heading" color="primary" weight="semibold">Andre købte også</Heading>
+      </div>
+      <div class="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+        {products.slice(0, 4).map((product) => (
+          <div class="shrink-0 w-3/4 snap-start">
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </div>
+      <div class={`hidden md:grid ${gridClasses}`}>
+        {products.slice(0, 4).map((product) => <ProductCard product={product} />)}
+      </div>
+    </section>
 
   </main>
 </MainLayout>

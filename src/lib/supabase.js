@@ -1,20 +1,19 @@
 // src/lib/supabase.js
 
-const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_URL = "https://uzjprnzrritimokvzoyj.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Vm_-WFws5OtBbopfyOJDdA_UZtG4LeT";
 
 export async function fetchProducts() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/product_page?select=*&is_active=eq.true`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/product_page?select=*`, {
     headers: {
       apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      Authorization: `sb_publishable_Vm_-WFws5OtBbopfyOJDdA_UZtG4LeT`,
     },
   });
 
   if (!res.ok) throw new Error("Kunne ikke hente produkter");
 
   const rows = await res.json();
-
   const productsMap = new Map();
 
   for (const row of rows) {
@@ -31,9 +30,11 @@ export async function fetchProducts() {
         size_guide: row.size_guide,
         delivery: row.delivery,
         returns: row.returns,
+        sort_order: row.product_sort_order ?? 0,
         categories: [],
         colors: new Map(),
         images: [],
+        friends_images: [],
       });
     }
 
@@ -59,49 +60,72 @@ export async function fetchProducts() {
           sizes: [],
         });
       }
-      if (row.size_label) {
+      if (row.size_id) {
         const color = product.colors.get(row.color_id);
         if (!color.sizes.find((s) => s.id === row.size_id)) {
           color.sizes.push({
             id: row.size_id,
             label: row.size_label,
             sort_order: row.size_sort_order,
+            in_stock: row.in_stock,
           });
         }
       }
     }
 
-    // Billeder
-    if (row.storage_path && !product.images.find((i) => i.storage_path === row.storage_path)) {
+    // Produktbilleder
+    if (row.storage_path && row.image_color_id && !product.images.find((i) => i.storage_path === row.storage_path)) {
       product.images.push({
         storage_path: row.storage_path,
         alt_text: row.alt_text,
-        sort_order: row.image_sort_order,
-        is_primary: row.image_is_primary,
-        color_id: row.color_id,
+        color_id: row.image_color_id,
       });
     }
   }
 
-  return Array.from(productsMap.values()).map((p) => ({
-    ...p,
-    colors: Array.from(p.colors.values())
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((color) => ({
-        ...color,
-        sizes: color.sizes.sort((a, b) => a.sort_order - b.sort_order),
-      })),
-    images: p.images.sort((a, b) => a.sort_order - b.sort_order),
-  }));
+  // Hent friends of boom billeder
+  const friendsRes = await fetch(`${SUPABASE_URL}/rest/v1/product_friends_images?select=*`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (friendsRes.ok) {
+    const friendsRows = await friendsRes.json();
+    for (const row of friendsRows) {
+      const product = productsMap.get(row.product_id);
+      if (product) {
+        product.friends_images.push({
+          storage_path: row.storage_path,
+          alt_text: row.alt_text,
+          sort_order: row.sort_order,
+        });
+      }
+    }
+  }
+
+  return Array.from(productsMap.values())
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((p) => ({
+      ...p,
+      colors: Array.from(p.colors.values())
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((color) => ({
+          ...color,
+          sizes: color.sizes.sort((a, b) => a.sort_order - b.sort_order),
+        })),
+      images: p.images,
+      friends_images: p.friends_images.sort((a, b) => a.sort_order - b.sort_order),
+    }));
 }
 
-// storage_path är redan en full URL
 export function getImageUrl(storagePath) {
   return storagePath;
 }
 
 export async function fetchProductsByCategory(categorySlug) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/product_page?select=*&is_active=eq.true&category_slug=eq.${categorySlug}`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/product_page?select=*&category_slug=eq.${categorySlug}`, {
     headers: {
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
@@ -111,8 +135,6 @@ export async function fetchProductsByCategory(categorySlug) {
   if (!res.ok) throw new Error("Kunne ikke hente kategori");
 
   const rows = await res.json();
-
-  // Samma gruppering som fetchProducts
   const productsMap = new Map();
 
   for (const row of rows) {
@@ -129,16 +151,22 @@ export async function fetchProductsByCategory(categorySlug) {
         size_guide: row.size_guide,
         delivery: row.delivery,
         returns: row.returns,
+        sort_order: row.product_sort_order ?? 0,
         categories: [],
         colors: new Map(),
         images: [],
+        friends_images: [],
       });
     }
 
     const product = productsMap.get(row.product_id);
 
     if (row.category_id && !product.categories.find((c) => c.id === row.category_id)) {
-      product.categories.push({ id: row.category_id, name: row.category_name, slug: row.category_slug });
+      product.categories.push({
+        id: row.category_id,
+        name: row.category_name,
+        slug: row.category_slug,
+      });
     }
 
     if (row.color_id) {
@@ -151,29 +179,74 @@ export async function fetchProductsByCategory(categorySlug) {
           sizes: [],
         });
       }
-      if (row.size_label) {
+      if (row.size_id) {
         const color = product.colors.get(row.color_id);
         if (!color.sizes.find((s) => s.id === row.size_id)) {
-          color.sizes.push({ id: row.size_id, label: row.size_label, sort_order: row.size_sort_order });
+          color.sizes.push({
+            id: row.size_id,
+            label: row.size_label,
+            sort_order: row.size_sort_order,
+            in_stock: row.in_stock,
+          });
         }
       }
     }
 
-    if (row.storage_path && !product.images.find((i) => i.storage_path === row.storage_path)) {
+    if (row.storage_path && row.image_color_id && !product.images.find((i) => i.storage_path === row.storage_path)) {
       product.images.push({
         storage_path: row.storage_path,
         alt_text: row.alt_text,
-        sort_order: row.image_sort_order,
-        color_id: row.color_id,
+        color_id: row.image_color_id,
       });
     }
   }
 
-  return Array.from(productsMap.values()).map((p) => ({
-    ...p,
-    colors: Array.from(p.colors.values())
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((color) => ({ ...color, sizes: color.sizes.sort((a, b) => a.sort_order - b.sort_order) })),
-    images: p.images.sort((a, b) => a.sort_order - b.sort_order),
-  }));
+  // Hent friends of boom billeder
+  const friendsRes = await fetch(`${SUPABASE_URL}/rest/v1/product_friends_images?select=*`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (friendsRes.ok) {
+    const friendsRows = await friendsRes.json();
+    for (const row of friendsRows) {
+      const product = productsMap.get(row.product_id);
+      if (product) {
+        product.friends_images.push({
+          storage_path: row.storage_path,
+          alt_text: row.alt_text,
+          sort_order: row.sort_order,
+        });
+      }
+    }
+  }
+
+  return Array.from(productsMap.values())
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((p) => ({
+      ...p,
+      colors: Array.from(p.colors.values())
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((color) => ({
+          ...color,
+          sizes: color.sizes.sort((a, b) => a.sort_order - b.sort_order),
+        })),
+      images: p.images,
+      friends_images: p.friends_images.sort((a, b) => a.sort_order - b.sort_order),
+    }));
+}
+
+export async function fetchCategoryBySlug(slug) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/categories?slug=eq.${slug}&select=*`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Kunne ikke hente kategori");
+  const data = await res.json();
+  return data[0] ?? null;
 }

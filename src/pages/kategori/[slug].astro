@@ -18,8 +18,8 @@ const products = await fetchProductsByCategory(slug);
 const categoryName = slug.charAt(0) + slug.slice(1);
 ---
 
-<MainLayout title={categoryName} class="px-margin-mobile lg:px-margin-desktop">
-  <main>
+<MainLayout title={categoryName}>
+  <main class="lg:mt-main-top-desktop mt-main-top-mobile px-margin-mobile lg:px-margin-desktop">
     <!-- START PÅ BREADCRUMB -->
     <div class="mb-6 flex items-center gap-2">
       <Text><Link href="/" variant="primary">Hjem</Link></Text>
